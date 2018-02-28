@@ -1,25 +1,16 @@
 import Ember from 'ember';
 
-export default Ember.Route.extend({
-    model: function() {
-        return this.setProperties.createRecord("order");
+export default Ember.Controller.extend({
+    validatePresenceOf: function(attr) {
+        if (!this.get("model." + attr + ".length")) {
+            this.get("model.errors").add(attr, "No puede estar en blanco");
+        }
     },
 
     actions: {
-        incrementQuality: function(item) {
-            item.incrementQuality("quantity");
-        },
-
-        decrementQuality: function(item) {
-            item.decrementQuality("quantity");
-        },
-
-        remoteItem: function(item) {
-            item.destroyRecord();
-        },
-
-        removeItemCancelation: function(item) {
-            item.set("quantity", 1);
+        sendOrder: function() {
+            this.validatePresenceOf("clientName");
+            this.validatePresenceOf("tableId");
         }
     }
 });
