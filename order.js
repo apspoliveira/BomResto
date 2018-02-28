@@ -1,21 +1,36 @@
-import DS from 'ember-data';
-
-export default DS.Model.extend({
-    items: DS.hasMany("orderItem"),
-    clientName: DS.attr(),
-    tableId: DS.attr(),
-
-    subTotal: function() {
-        return this.get("items").mapBy("total").reduce(function(acc, current) {
-            return acc + current;
-        }, 0);
-    }.property("items.@each.total"),
-
-    iva: function() {
-        return this.get("subTotal") * 0.16;
-    }.property("subTotal"),
-
-    total: function() {
-        return this.get("subTotal") + this.get("iva");
-    }.property("subTotal", "iva")
-});
+function sendOrderStatus(id) {
+    var status_id = document.getElementById("status");
+    var status = status_id.options[status_id.selectIndex].value;
+    var ordertime_id = document.getElementById("order_time");
+    var ordertime= ordertime_id.options[ordertime_id.selectIndex].value;
+    var declinereason = document.getElementById("decline_reason").value;
+    if (status=='1'){
+        if (ordertime!='') {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    window.location = "index";
+                }
+            };
+            xhttp.open("GET", "../../api/get_order_status.php?id="+id+"&status="+status+"&time="+ordertime+"",true);
+            xhttp.send();
+        } else {
+            alert('Please select order delivery time');
+        }
+    }elseif(status='3') {
+        if(deliverreason!='') {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    window.location = "index";
+                }
+            };
+            xhttp.open("GET", "../../api/get_orders_status.php?id" + id+"&status="+status+"&reason="+declinereason+"", true);
+            xhttp.send();
+        } else {
+            alert('Please enter decline reason');
+        }
+    } else {
+        alert('Please select status');
+    }
+}
